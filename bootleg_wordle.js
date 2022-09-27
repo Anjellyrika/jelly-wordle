@@ -65,7 +65,7 @@ function gamestart(wordle) {
                 appdiv.replaceChildren(...elements);
                 // Correct answer
                 if (guess === wordle) {
-                    alert(`${guess.toUpperCase()} is the correct word!`);
+                    alert(`${wordle.toUpperCase()} is the correct word!`);
                     textInput.removeEventListener('keydown', gameHandler);
                 }
                 // Game over (exceeded six valid guesses)
