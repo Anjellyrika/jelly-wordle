@@ -22,7 +22,7 @@ function startscreen() {
                 alert("No URL specified!");
             else {
                 let xhr = new XMLHttpRequest();
-                xhr.open('GET', textInput.value, true);
+                xhr.open('GET', apiEndpoint, true);
                 xhr.onload = function () {
                     // Fetch a random word
                     const wordlist = (xhr.responseText).split('\n');
