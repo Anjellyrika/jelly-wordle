@@ -3,10 +3,11 @@ function linebreak() {
 }
 
 const apiEndpoint : string = "https://gist.githubusercontent.com/dracos/dd0668f281e685bad51479e5acaadb93/raw/ca9018b32e963292473841fb55fd5a62176769b5/valid-wordle-words.txt";
+const appdiv = document.getElementById('appdiv');
 
 function startscreen() {
-    const inputdiv = document.getElementById('URL Input');
-    if (inputdiv !== null) {
+    
+    if (appdiv !== null) {
 
         let elements : HTMLElement[] = [];
 
@@ -20,7 +21,7 @@ function startscreen() {
         startbutton.value = "Get a random word!";
         elements.push(startbutton);
 
-        inputdiv.replaceChildren(...elements);
+        appdiv.replaceChildren(...elements);
         
         // Clicking the start button
         startbutton.addEventListener('click', () => {
@@ -36,6 +37,10 @@ function startscreen() {
                     
                     var wordle = wordlist[randomIndex]
                     console.log(wordle);
+
+                    // Clear interface and start game
+                    elements = [];
+                    appdiv.replaceChildren(...elements);
                     gamestart(wordle);
                 };
                 xhr.send();
@@ -45,7 +50,15 @@ function startscreen() {
 }
 
 function gamestart(wordle : string){
-    alert(wordle);
+    if (appdiv === null) return;
+
+    let elements : HTMLElement[] = [];
+
+    const textInput = document.createElement('input');
+    textInput.setAttribute('type', 'text');
+    elements.push(textInput);
+
+    appdiv.replaceChildren(...elements);
     
 }
 
