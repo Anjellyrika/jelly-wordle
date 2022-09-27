@@ -2,6 +2,11 @@
 function linebreak() {
     return document.createElement('br');
 }
+function displayText(text) {
+    const textToDisplay = document.createElement('p');
+    textToDisplay.textContent = text;
+    return textToDisplay;
+}
 const apiEndpoint = "https://gist.githubusercontent.com/dracos/dd0668f281e685bad51479e5acaadb93/raw/ca9018b32e963292473841fb55fd5a62176769b5/valid-wordle-words.txt";
 const appdiv = document.getElementById('appdiv');
 function startscreen() {
@@ -29,9 +34,6 @@ function startscreen() {
                     const randomIndex = Math.floor(Math.random() * wordlist.length);
                     var wordle = wordlist[randomIndex];
                     console.log(wordle);
-                    // Clear interface and start game
-                    elements = [];
-                    appdiv.replaceChildren(...elements);
                     gamestart(wordle);
                 };
                 xhr.send();
@@ -46,11 +48,35 @@ function gamestart(wordle) {
     const textInput = document.createElement('input');
     textInput.setAttribute('type', 'text');
     elements.push(textInput);
+    elements.push(linebreak());
+    elements.push(displayText("A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"));
     appdiv.replaceChildren(...elements);
+    // Processing input
+    let num_guesses = 0;
+    var gameHandler = function (key) {
+        if (key.code === 'Enter') {
+            if (textInput.value.length !== 5)
+                alert("Please enter a five-letter word!");
+            else {
+                num_guesses++;
+                let guess = textInput.value.toLowerCase();
+                textInput.value = '';
+                elements.push(displayText(guess));
+                appdiv.replaceChildren(...elements);
+                // Correct answer
+                if (guess === wordle) {
+                    alert(`${guess.toUpperCase()} is the correct word!`);
+                    textInput.removeEventListener('keydown', gameHandler);
+                }
+                // Game over (exceeded six valid guesses)
+                if (num_guesses === 6) {
+                    alert(`Game over! The word was ${wordle.toUpperCase()}!`);
+                    textInput.removeEventListener('keydown', gameHandler);
+                }
+            }
+        }
+    };
+    textInput.addEventListener('keydown', gameHandler);
 }
 alert("Welcome to bootleg Wordle!"); // debugging
 startscreen();
-// if (textinput.value === '') {
-//     alert("No URL specified.");
-// }
-// elements.push(linebreak());
