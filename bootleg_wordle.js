@@ -17,7 +17,7 @@ function startscreen() {
         elements.push(startbutton);
         inputdiv.replaceChildren(...elements);
         // Clicking the start button
-        addEventListener('click', () => {
+        startbutton.addEventListener('click', () => {
             if (textInput.value === '')
                 alert("No URL specified!");
             else {
@@ -27,12 +27,17 @@ function startscreen() {
                     // Fetch a random word
                     const wordlist = (xhr.responseText).split('\n');
                     const randomIndex = Math.floor(Math.random() * wordlist.length);
-                    console.log(wordlist[randomIndex]);
+                    var wordle = wordlist[randomIndex];
+                    console.log(wordle);
+                    gamestart(wordle);
                 };
                 xhr.send();
             }
         });
     }
+}
+function gamestart(wordle) {
+    alert(wordle);
 }
 alert("Welcome to bootleg Wordle!"); // debugging
 startscreen();
