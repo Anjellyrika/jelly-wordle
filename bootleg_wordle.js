@@ -110,5 +110,4 @@ function checkanswer(guess, wordle) {
     }
     appdiv.appendChild(linebreak());
 }
-alert("Welcome to Jelly's bootleg Wordle!"); /// debugging
 startscreen();

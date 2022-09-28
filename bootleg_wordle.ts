@@ -136,5 +136,4 @@ function checkanswer(guess : string, wordle: string) {
     appdiv.appendChild(linebreak())
 }
 
-alert("Welcome to Jelly's bootleg Wordle!"); /// debugging
 startscreen();
