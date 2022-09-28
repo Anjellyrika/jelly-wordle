@@ -1,0 +1,11 @@
+.correct {
+    color: green;
+  }
+  
+.misplaced {
+    color: darkgoldenrod;
+  }
+
+.incorrect {
+  color: rgb(68, 68, 68);
+  }

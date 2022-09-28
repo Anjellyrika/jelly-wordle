@@ -7,6 +7,12 @@ function displayText(text) {
     textToDisplay.textContent = text;
     return textToDisplay;
 }
+function showLetterhints(letter, type) {
+    const newSpan = document.createElement('span');
+    newSpan.classList.add(type);
+    newSpan.textContent = letter;
+    return newSpan;
+}
 const apiEndpoint = "https://gist.githubusercontent.com/dracos/dd0668f281e685bad51479e5acaadb93/raw/ca9018b32e963292473841fb55fd5a62176769b5/valid-wordle-words.txt";
 const appdiv = document.getElementById('appdiv');
 function startscreen() {
@@ -30,9 +36,9 @@ function startscreen() {
                 xhr.open('GET', apiEndpoint, true);
                 xhr.onload = function () {
                     // Fetch a random word
-                    const wordlist = (xhr.responseText).split('\n');
-                    const randomIndex = Math.floor(Math.random() * wordlist.length);
-                    var wordle = wordlist[randomIndex];
+                    const wordList = (xhr.responseText).split('\n');
+                    const randomIndex = Math.floor(Math.random() * wordList.length);
+                    var wordle = wordList[randomIndex];
                     console.log(wordle);
                     gamestart(wordle);
                 };
@@ -61,8 +67,7 @@ function gamestart(wordle) {
                 num_guesses++;
                 let guess = textInput.value.toLowerCase();
                 textInput.value = '';
-                elements.push(displayText(guess));
-                appdiv.replaceChildren(...elements);
+                showhints(guess, wordle);
                 // Correct answer
                 if (guess === wordle) {
                     alert(`${wordle.toUpperCase()} is the correct word!`);
@@ -78,5 +83,26 @@ function gamestart(wordle) {
     };
     textInput.addEventListener('keydown', gameHandler);
 }
-alert("Welcome to bootleg Wordle!"); // debugging
+function showhints(guess, wordle) {
+    if (appdiv === null)
+        return;
+    const guessArray = guess.split('');
+    const wordleArray = wordle.split('');
+    guessArray.map(function (letter, index) {
+        if (letter === wordleArray[index]) { // correct
+            let correctLetter = showLetterhints(letter, 'correct');
+            appdiv.appendChild(correctLetter);
+        }
+        else if (wordle.includes(letter)) { // misplaced
+            let misplacedLetter = showLetterhints(letter, 'misplaced');
+            appdiv.appendChild(misplacedLetter);
+        }
+        else { // incorrect
+            let wrongLetter = showLetterhints(letter, 'incorrect');
+            appdiv.appendChild(wrongLetter);
+        }
+    });
+    appdiv.appendChild(linebreak());
+}
+alert("Welcome to Jelly's bootleg Wordle!"); /// debugging
 startscreen();
