@@ -67,14 +67,15 @@ function gamestart(wordle) {
                 num_guesses++;
                 let guess = textInput.value.toLowerCase();
                 textInput.value = '';
-                showhints(guess, wordle);
+                checkanswer(guess, wordle);
                 // Correct answer
                 if (guess === wordle) {
                     alert(`${wordle.toUpperCase()} is the correct word!`);
                     textInput.removeEventListener('keydown', gameHandler);
                 }
                 // Game over (exceeded six valid guesses)
-                if (num_guesses === 6) {
+                console.log(num_guesses);
+                if (num_guesses === 6 && guess !== wordle) {
                     alert(`Game over! The word was ${wordle.toUpperCase()}!`);
                     textInput.removeEventListener('keydown', gameHandler);
                 }
@@ -83,25 +84,30 @@ function gamestart(wordle) {
     };
     textInput.addEventListener('keydown', gameHandler);
 }
-function showhints(guess, wordle) {
+function checkanswer(guess, wordle) {
     if (appdiv === null)
         return;
-    const guessArray = guess.split('');
-    const wordleArray = wordle.split('');
-    guessArray.map(function (letter, index) {
-        if (letter === wordleArray[index]) { // correct
-            let correctLetter = showLetterhints(letter, 'correct');
-            appdiv.appendChild(correctLetter);
+    let hints = Array(5).fill('incorrect');
+    let correctPositions = [];
+    for (let i = 0; i < 5; i++) {
+        if (guess[i] === wordle[i]) {
+            hints[i] = 'correct';
+            correctPositions.push(i);
         }
-        else if (wordle.includes(letter)) { // misplaced
-            let misplacedLetter = showLetterhints(letter, 'misplaced');
-            appdiv.appendChild(misplacedLetter);
+    }
+    let wordleArray = Array.from(wordle);
+    correctPositions.forEach(index => wordleArray[index] = ''); // remove already correct answers
+    for (let i = 0; i < 5; i++) {
+        if (wordleArray.includes(guess[i]) && guess[i] !== wordle[i]) {
+            hints[i] = 'misplaced';
+            wordleArray[wordleArray.indexOf(guess[i])] = ''; // handling duplicates
         }
-        else { // incorrect
-            let wrongLetter = showLetterhints(letter, 'incorrect');
-            appdiv.appendChild(wrongLetter);
-        }
-    });
+    }
+    // Displaying text
+    for (let j = 0; j < hints.length; j++) {
+        let coloredLetter = showLetterhints(guess[j], hints[j]);
+        appdiv.appendChild(coloredLetter);
+    }
     appdiv.appendChild(linebreak());
 }
 alert("Welcome to Jelly's bootleg Wordle!"); /// debugging

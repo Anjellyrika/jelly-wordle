@@ -7,5 +7,6 @@
   }
 
 .incorrect {
+  font-weight: bold;
   color: rgb(68, 68, 68);
   }
