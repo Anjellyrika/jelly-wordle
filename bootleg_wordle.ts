@@ -31,7 +31,7 @@ function startscreen() {
 
         const startbutton = document.createElement('input');
         startbutton.setAttribute('type', 'button');
-        startbutton.value = "Get a random word!";
+        startbutton.value = "Click to get a random word!";
         elements.push(startbutton);
 
         appdiv.replaceChildren(...elements);
@@ -94,7 +94,6 @@ function gamestart(wordle : string){
                 }
 
                 // Game over (exceeded six valid guesses)
-                console.log(num_guesses);
                 if (num_guesses === 6 && guess !== wordle) {
                     alert(`Game over! The word was ${wordle.toUpperCase()}!`);
                     textInput.removeEventListener('keydown', gameHandler);

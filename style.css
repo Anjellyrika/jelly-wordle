@@ -1,12 +1,14 @@
 .correct {
+    font-size: 92px;
     color: green;
   }
   
 .misplaced {
+    font-size: 92px;
     color: darkgoldenrod;
   }
 
 .incorrect {
-  font-weight: bold;
+  font-size: 92px;
   color: rgb(68, 68, 68);
   }
