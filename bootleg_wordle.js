@@ -1,7 +1,4 @@
 "use strict";
-function linebreak() {
-    return document.createElement('br');
-}
 function displayText(text) {
     const textToDisplay = document.createElement('p');
     textToDisplay.textContent = text;
@@ -10,7 +7,7 @@ function displayText(text) {
 function showLetterhints(letter, type) {
     const newSpan = document.createElement('span');
     newSpan.classList.add(type);
-    newSpan.textContent = letter;
+    newSpan.textContent = letter.toUpperCase();
     return newSpan;
 }
 const apiEndpoint = "https://gist.githubusercontent.com/dracos/dd0668f281e685bad51479e5acaadb93/raw/ca9018b32e963292473841fb55fd5a62176769b5/valid-wordle-words.txt";
@@ -20,10 +17,12 @@ function startscreen() {
         let elements = [];
         const textInput = document.createElement('input');
         textInput.setAttribute('type', 'text');
+        textInput.className = 'textinput';
         textInput.value = apiEndpoint;
         elements.push(textInput);
         const startbutton = document.createElement('input');
         startbutton.setAttribute('type', 'button');
+        startbutton.className = 'startbutton';
         startbutton.value = "Click to get a random word!";
         elements.push(startbutton);
         appdiv.replaceChildren(...elements);
@@ -51,40 +50,93 @@ function gamestart(wordle) {
     if (appdiv === null)
         return;
     let elements = [];
-    const textInput = document.createElement('input');
-    textInput.setAttribute('type', 'text');
-    elements.push(textInput);
-    elements.push(linebreak());
-    elements.push(displayText("A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"));
     appdiv.replaceChildren(...elements);
-    // Processing input
+    const body = document.getElementById('body');
+    if (body === null)
+        return;
+    // Generate empty game board
+    const board = document.getElementById('board');
+    if (board === null)
+        return;
+    for (let i = 0; i <= 5; i++) {
+        const row = document.createElement('div');
+        row.className = 'letterBoxRow';
+        for (let j = 0; j < 5; j++) {
+            const box = document.createElement('div');
+            box.className = 'letterBox';
+            box.textContent = ' ';
+            row.appendChild(box);
+        }
+        board.appendChild(row);
+    }
+    // Generate key buttons
+    const buttonsdiv = document.getElementById('keyboard-buttons');
+    if (buttonsdiv === null)
+        return;
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    for (const letter of alphabet) {
+        const letterbutton = document.createElement('input');
+        letterbutton.setAttribute('type', 'button');
+        letterbutton.className = 'clickableLetter';
+        letterbutton.value = letter;
+        buttonsdiv.appendChild(letterbutton);
+        // Make clickable
+        letterbutton.addEventListener('mouseup', () => {
+            let key = letterbutton.value;
+            body.dispatchEvent(new KeyboardEvent('keydown', { 'key': key }));
+        });
+    }
+    // Processing input    
     let num_guesses = 0;
+    let nextBoxIndex = 0;
     var gameHandler = function (key) {
-        if (key.code === 'Enter') {
-            if (textInput.value.length !== 5)
-                alert("Please enter a five-letter word!");
+        let rowToFill = document.getElementsByClassName('letterBoxRow')[num_guesses];
+        // Insert letter
+        if (nextBoxIndex !== 5 && key.key.length == 1) {
+            let boxToFill = rowToFill.children[nextBoxIndex];
+            boxToFill.textContent = (key.key).toUpperCase();
+            nextBoxIndex++;
+        }
+        // Delete letter
+        if (nextBoxIndex !== 0 && key.key === 'Backspace') {
+            let boxToFill = document.getElementsByClassName('letterBox')[nextBoxIndex - 1];
+            boxToFill.textContent = ' ';
+            nextBoxIndex--;
+        }
+        // Check input
+        let guess = '';
+        if (key.key === 'Enter') {
+            if (nextBoxIndex !== 5) {
+                return;
+            }
             else {
                 num_guesses++;
-                let guess = textInput.value.toLowerCase();
-                textInput.value = '';
-                checkanswer(guess, wordle);
+                nextBoxIndex = 0;
+                for (let i = 0; i < 5; i++) {
+                    guess = guess.concat((rowToFill.children[i]).innerHTML).toLowerCase();
+                }
+                checkanswer(guess, wordle, num_guesses - 1);
                 // Correct answer
                 if (guess === wordle) {
                     alert(`${wordle.toUpperCase()} is the correct word!`);
-                    textInput.removeEventListener('keydown', gameHandler);
+                    body.removeEventListener('keydown', gameHandler);
                 }
                 // Game over (exceeded six valid guesses)
                 if (num_guesses === 6 && guess !== wordle) {
                     alert(`Game over! The word was ${wordle.toUpperCase()}!`);
-                    textInput.removeEventListener('keydown', gameHandler);
+                    body.removeEventListener('keydown', gameHandler);
                 }
             }
         }
     };
-    textInput.addEventListener('keydown', gameHandler);
+    body.addEventListener('keydown', gameHandler);
 }
-function checkanswer(guess, wordle) {
-    if (appdiv === null)
+function checkanswer(guess, wordle, guessNo) {
+    const board = document.getElementById('board');
+    if (board === null)
+        return;
+    const buttonsdiv = document.getElementById('keyboard-buttons');
+    if (buttonsdiv === null)
         return;
     let hints = Array(5).fill('incorrect');
     let correctPositions = [];
@@ -103,10 +155,11 @@ function checkanswer(guess, wordle) {
         }
     }
     // Displaying text
-    for (let j = 0; j < hints.length; j++) {
-        let coloredLetter = showLetterhints(guess[j], hints[j]);
-        appdiv.appendChild(coloredLetter);
+    let currentRow = board.children[guessNo];
+    for (let j = 0; j < wordle.length; j++) {
+        let coloredBox = showLetterhints(guess[j], hints[j]);
+        let boxToColor = (currentRow.children[j]);
+        currentRow.replaceChild(coloredBox, boxToColor);
     }
-    appdiv.appendChild(linebreak());
 }
 startscreen();
