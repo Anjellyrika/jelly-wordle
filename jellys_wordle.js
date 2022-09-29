@@ -118,18 +118,19 @@ function gamestart(wordle) {
                 checkanswer(guess, wordle, num_guesses - 1);
                 // Correct answer
                 if (guess === wordle) {
-                    alert(`${wordle.toUpperCase()} is the correct word!`);
+                    setTimeout(() => { alert(`${wordle.toUpperCase()} is the correct word!`); }, 100);
                     body.removeEventListener('keydown', gameHandler);
                 }
                 // Game over (exceeded six valid guesses)
                 if (num_guesses === 6 && guess !== wordle) {
-                    alert(`Game over! The word was ${wordle.toUpperCase()}!`);
+                    setTimeout(() => { alert(`Game over! The word was ${wordle.toUpperCase()}!`); }, 100);
                     body.removeEventListener('keydown', gameHandler);
                 }
             }
         }
     };
     body.addEventListener('keydown', gameHandler);
+    body.classList.add('unselectable');
 }
 function checkanswer(guess, wordle, guessNo) {
     const board = document.getElementById('board');

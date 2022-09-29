@@ -67,6 +67,7 @@ function gamestart(wordle : string){
     // Generate empty game board
     const board = document.getElementById('board');
     if (board === null) return;
+
     for (let i = 0; i <= 5; i++){
         const row = document.createElement('div');
             row.className = 'letterBoxRow';
@@ -138,19 +139,20 @@ function gamestart(wordle : string){
     
                 // Correct answer
                 if (guess === wordle) {
-                    alert(`${wordle.toUpperCase()} is the correct word!`);
+                    setTimeout(() => {alert(`${wordle.toUpperCase()} is the correct word!`)}, 100);
                     body.removeEventListener('keydown', gameHandler);
                 }
     
                 // Game over (exceeded six valid guesses)
                 if (num_guesses === 6 && guess !== wordle) {
-                    alert(`Game over! The word was ${wordle.toUpperCase()}!`);
+                    setTimeout(() => {alert(`Game over! The word was ${wordle.toUpperCase()}!`)}, 100);
                     body.removeEventListener('keydown', gameHandler);
                 }
             }
         }
     }
     body.addEventListener('keydown', gameHandler);
+    body.classList.add('unselectable');
 }
 
 function checkanswer(guess : string, wordle: string, guessNo: number) {
